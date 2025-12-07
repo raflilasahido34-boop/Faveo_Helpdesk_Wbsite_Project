@@ -1,0 +1,59 @@
+{
+    "feature": "tmin",
+    "threshold": 21.75,
+    "gain_ratio": 0.30028832245140014,
+    "left": {
+        "label": 0
+    },
+    "right": {
+        "feature": "wspd",
+        "threshold": 28.7,
+        "gain_ratio": 0.3041124209848895,
+        "left": {
+            "feature": "wspd",
+            "threshold": 20.95,
+            "gain_ratio": 0.2728552922648732,
+            "left": {
+                "feature": "tmin",
+                "threshold": 23.35,
+                "gain_ratio": 0.09276432923568798,
+                "left": {
+                    "feature": "tavg",
+                    "threshold": 26.549999999999997,
+                    "gain_ratio": 0.3820083318411351,
+                    "left": {
+                        "label": 1
+                    },
+                    "right": {
+                        "label": 0
+                    }
+                },
+                "right": {
+                    "feature": "wspd",
+                    "threshold": 18.8,
+                    "gain_ratio": 0.11759417559420784,
+                    "left": {
+                        "feature": "tavg",
+                        "threshold": 28.25,
+                        "gain_ratio": 0.0711547037846941,
+                        "left": {
+                            "label": 1
+                        },
+                        "right": {
+                            "label": 1
+                        }
+                    },
+                    "right": {
+                        "label": 0
+                    }
+                }
+            },
+            "right": {
+                "label": 0
+            }
+        },
+        "right": {
+            "label": 0
+        }
+    }
+}

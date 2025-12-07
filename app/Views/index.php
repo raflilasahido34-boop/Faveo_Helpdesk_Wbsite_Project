@@ -44,69 +44,7 @@
             <div class="weather-card prediction-panel">
                 <h2 class="panel-title" id="predictionTitle">Weather Prediction (C4.5 Algorithm)</h2>
                 <div class="decision-tree">
-                    <div class="tree-container">
-                        <div class="tree-node root">
-                            Humidity &gt; 70%?
-                        </div>
-                        <div class="tree-level">
-                            <div class="tree-branch">
-                                <div class="branch-line"></div>
-                                <div class="branch-label">
-                                    Yes
-                                </div>
-                                <div class="tree-node">
-                                    Temp &gt; 25°C?
-                                </div>
-                                <div class="branch-line"></div>
-                                <div style="display: flex; gap: 1rem;">
-                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
-                                        <div class="branch-label">
-                                            Yes
-                                        </div>
-                                        <div class="tree-node leaf-node">
-                                            Rainy
-                                        </div>
-                                    </div>
-                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
-                                        <div class="branch-label">
-                                            No
-                                        </div>
-                                        <div class="tree-node leaf-node">
-                                            Cloudy
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tree-branch">
-                                <div class="branch-line"></div>
-                                <div class="branch-label">
-                                    No
-                                </div>
-                                <div class="tree-node">
-                                    Wind &gt; 15 km/h?
-                                </div>
-                                <div class="branch-line"></div>
-                                <div style="display: flex; gap: 1rem;">
-                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
-                                        <div class="branch-label">
-                                            Yes
-                                        </div>
-                                        <div class="tree-node leaf-node">
-                                            Windy
-                                        </div>
-                                    </div>
-                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
-                                        <div class="branch-label">
-                                            No
-                                        </div>
-                                        <div class="tree-node leaf-node">
-                                            Sunny
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <svg id="treeCanvas" width="100%" height="400"></svg>
                 </div>
                 <div class="prediction-result">
                     <div class="result-title">
@@ -122,7 +60,8 @@
             <p id="footerText">Data updated every 30 minutes • Powered by C4.5 Decision Tree Algorithm</p>
         </footer>
     </div>
-    <script src="<?= base_url('/js/scripts.js') ?>"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="<?= base_url('/js/script.js') ?>"></script>
 </body>
 
 </html>

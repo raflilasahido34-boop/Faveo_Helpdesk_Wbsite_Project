@@ -241,3 +241,135 @@ if (window.elementSdk) {
         }
     }
 })();
+const featureLabelMap = {
+    tmin: "Suhu Minimum (°C)",
+    tavg: "Suhu Rata-rata (°C)",
+    wspd: "Kecepatan Angin (km/jam)"
+};
+async function loadDecisionTree() {
+    const res = await fetch("/data/tree.json");
+    const rawTree = await res.json();
+
+    const d3Tree = convertToD3Format(rawTree); // ✅ KONVERSI DI SINI
+    drawTree(d3Tree)
+}
+function convertToD3Format(node) {
+    if (!node) return null;
+
+    let newNode = {
+        ...node
+    };
+
+    if (node.left || node.right) {
+        newNode.children = [];
+
+        if (node.left) {
+            newNode.children.push(convertToD3Format(node.left));
+        }
+
+        if (node.right) {
+            newNode.children.push(convertToD3Format(node.right));
+        }
+    }
+
+    return newNode;
+}
+
+function drawTree(data) {
+    const width = 900;
+    const height = 450;
+
+    const svg = d3.select("#treeCanvas")
+        .attr("viewBox", `0 0 ${width} ${height}`)
+        .html("") // ✅ CLEARR dulu biar tidak numpuk
+        .append("g")
+        .attr("transform", "translate(40,40)");
+
+    const root = d3.hierarchy(data);
+
+    const treeLayout = d3.tree().size([height - 80, width - 120]);
+    treeLayout(root);
+
+    // ✅ GARIS CABANG
+    svg.selectAll("line")
+        .data(root.links())
+        .enter()
+        .append("line")
+        .attr("x1", d => d.source.y)
+        .attr("y1", d => d.source.x)
+        .attr("x2", d => d.target.y)
+        .attr("y2", d => d.target.x)
+        .attr("stroke", "#c7d2fe")
+        .attr("stroke-width", 2);
+
+
+    // ✅ NODE
+    const nodes = svg.selectAll("g.node")
+        .data(root.descendants())
+        .enter()
+        .append("g")
+        .attr("transform", d => `translate(${d.y},${d.x})`);
+
+    nodes.append("rect")
+        .attr("x", -70)
+        .attr("y", -22)
+        .attr("rx", 10)
+        .attr("ry", 10)
+        .attr("width", 140)
+        .attr("height", 44)
+        .attr("fill", d => {
+            if (d.children) return "#6366f1";      // node keputusan
+            return d.data.label === 1 ? "#16a34a" : "#dc2626"; // hujan / tidak
+        })
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 1.5);
+
+
+    nodes.append("text")
+        .attr("text-anchor", "middle")
+        .attr("fill", "white")
+        .style("font-size", "11px")
+        .style("font-weight", "bold")
+        .each(function (d) {
+            const text = d3.select(this);
+
+            if (d.data.feature) {
+                const label = featureLabelMap[d.data.feature] || d.data.feature;
+
+                text.append("tspan")
+                    .attr("x", 0)
+                    .attr("dy", "-0.3em")
+                    .text(label);
+
+                text.append("tspan")
+                    .attr("x", 0)
+                    .attr("dy", "1.2em")
+                    .style("font-weight", "normal")
+                    .text(`≤ ${d.data.threshold.toFixed(2)}`);
+            } else {
+                text.text(d.data.label === 1 ? "HUJAN" : "TIDAK HUJAN");
+            }
+        });
+}
+
+
+loadDecisionTree();
+function predictFromTree(tree, input) {
+    let node = tree;
+    let path = [];
+
+    while (node.feature) {
+        path.push(node);
+
+        if (input[node.feature] <= node.threshold) {
+            node = node.left;
+        } else {
+            node = node.right;
+        }
+    }
+
+    return {
+        result: node.label === 1 ? "Hujan" : "Tidak Hujan",
+        path: path
+    };
+}
