@@ -7,3 +7,4 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 $routes->get('weather/gorontalo', 'Weather::getGorontaloWeather');
+$routes->post('upload-tree', 'TreeUpload::upload');

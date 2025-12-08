@@ -246,12 +246,16 @@ const featureLabelMap = {
     tavg: "Suhu Rata-rata (°C)",
     wspd: "Kecepatan Angin (km/jam)"
 };
+let decisionTree = null;
+
 async function loadDecisionTree() {
     const res = await fetch("/data/tree.json");
     const rawTree = await res.json();
 
-    const d3Tree = convertToD3Format(rawTree); // ✅ KONVERSI DI SINI
-    drawTree(d3Tree)
+    decisionTree = rawTree;  // SIMPAN DI SINI
+
+    const d3Tree = convertToD3Format(rawTree);
+    drawTree(d3Tree);
 }
 function convertToD3Format(node) {
     if (!node) return null;
@@ -373,3 +377,43 @@ function predictFromTree(tree, input) {
         path: path
     };
 }
+
+document.getElementById("updateWeatherBtn").addEventListener("click", () => {
+    const temp = document.getElementById("inputTemp").value;
+    const humidity = document.getElementById("inputHumidity").value;
+    const wind = document.getElementById("inputWind").value;
+
+    if (temp) document.getElementById("temperature").textContent = temp + "°C";
+    if (condition) document.getElementById("weatherCondition").textContent = condition;
+    if (humidity) document.getElementById("humidity").textContent = humidity + "%";
+    if (wind) document.getElementById("windSpeed").textContent = wind + " km/h";
+});
+function getWeatherInput() {
+    return {
+        tmin: parseFloat(document.getElementById("inputTemp").value) || 0,
+        tavg: parseFloat(document.getElementById("inputTemp").value) || 0, 
+        wspd: parseFloat(document.getElementById("inputWind").value) || 0
+    };
+}
+
+document.getElementById("predictBtn").addEventListener("click", () => {
+    if (!decisionTree) {
+        alert("Decision tree belum dimuat.");
+        return;
+    }
+
+    const input = getWeatherInput();
+    const prediction = predictFromTree(decisionTree, input);
+
+    const resultBox = document.querySelector("#predictBtn .result-value");
+
+    if (prediction.result === "Hujan") {
+        resultBox.textContent = "⛈️ Hujan";
+        resultBox.style.color = "#2563eb";
+    } else {
+        resultBox.textContent = "☀️ Tidak Hujan";
+        resultBox.style.color = "#16a34a";
+    }
+
+    console.log("Path yang dilalui:", prediction.path);
+});
