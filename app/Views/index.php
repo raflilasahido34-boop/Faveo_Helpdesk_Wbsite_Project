@@ -2,64 +2,93 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gorontalo Weather App</title>
-    <link rel="stylesheet" href="<?= base_url('/css/styles.css') ?>">
-    <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
-
+    <link rel="stylesheet" href="<?= base_url('/css/styles.css') ?>" />
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-    <div class="app-container">
-        <header class="header">
-            <h1 class="app-title" id="appTitle">Gorontalo Weather</h1>
-            <div class="location"><span>📍</span> <span id="locationName">Gorontalo, Indonesia</span>
+<body class="bg-gradient-to-b from-blue-100 to-blue-200 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-4xl bg-white shadow-2xl rounded-3xl overflow-hidden border border-blue-300">
+        <header class="p-6 bg-blue-600 text-white text-center shadow-md">
+            <h1 class="text-3xl font-bold" id="appTitle">Gorontalo Weather</h1>
+            <div class="flex justify-center items-center gap-2 mt-2 text-lg">
+                <span>📍</span>
+                <span id="locationName">Gorontalo, Indonesia</span>
             </div>
         </header>
-        <main class="main-content">
-            <div class="weather-card current-weather">
-                <div class="weather-main">
-                    <div class="weather-icon">
-                        ⛅
-                    </div>
-                    <div class="temperature" id="temperature">
-                        28°C
-                    </div>
-                    <div class="condition" id="weatherCondition">
-                        Partly Cloudy
-                    </div>
+
+        <main class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Current Weather Card -->
+            <div class="p-6 bg-blue-50 rounded-2xl shadow-md">
+                <div class="flex flex-col items-center">
+                    <div class="text-6xl mb-2">⛅</div>
+                    <div class="text-4xl font-semibold" id="temperature">28°C</div>
+                    <div class="text-lg text-gray-700" id="weatherCondition">Partly Cloudy</div>
                 </div>
-                <div class="weather-details">
-                    <div class="detail-item"><span class="detail-label">Humidity</span> <span class="detail-value" id="humidity">75%</span>
+
+                <div class="mt-6 grid grid-cols-2 gap-4 text-sm">
+                    <div class="p-3 bg-white rounded-xl shadow text-center">
+                        <p class="font-semibold">Humidity</p>
+                        <p id="humidity">75%</p>
                     </div>
-                    <div class="detail-item"><span class="detail-label">Wind Speed</span> <span class="detail-value" id="windSpeed">12 km/h</span>
+                    <div class="p-3 bg-white rounded-xl shadow text-center">
+                        <p class="font-semibold">Wind Speed</p>
+                        <p id="windSpeed">12 km/h</p>
                     </div>
-                    <div class="detail-item"><span class="detail-label">Pressure</span> <span class="detail-value">1013 hPa</span>
+                    <div class="p-3 bg-white rounded-xl shadow text-center">
+                        <p class="font-semibold">Pressure</p>
+                        <p>1013 hPa</p>
                     </div>
-                    <div class="detail-item"><span class="detail-label">Visibility</span> <span class="detail-value">10 km</span>
+                    <div class="p-3 bg-white rounded-xl shadow text-center">
+                        <p class="font-semibold">Visibility</p>
+                        <p>10 km</p>
                     </div>
                 </div>
             </div>
-            <div class="weather-card prediction-panel">
-                <h2 class="panel-title" id="predictionTitle">Weather Prediction (C4.5 Algorithm)</h2>
-                <div class="decision-tree">
-                    <svg id="treeCanvas" width="100%" height="400"></svg>
+
+            <!-- Prediction Card -->
+            <div class="p-6 bg-blue-50 rounded-2xl shadow-md">
+                <h2 class="text-xl font-bold text-center mb-4" id="predictionTitle">Weather Prediction (C4.5 Algorithm)</h2>
+
+                <div class="border rounded-xl bg-white p-3 shadow">
+                    <svg id="treeCanvas" width="100%" height="350"></svg>
                 </div>
-                <div class="prediction-result">
-                    <div class="result-title">
-                        24-Hour Prediction
-                    </div>
-                    <div class="result-value">
-                        ⛈️ Rainy
-                    </div>
+
+                <div class="mt-5 p-4 bg-white rounded-xl shadow text-center">
+                    <p class="text-md font-semibold">24-Hour Prediction</p>
+                    <p class="text-3xl mt-2" id="prediksi_result">⛈️ Rainy</p>
                 </div>
             </div>
         </main>
-        <footer class="footer">
+
+        <!-- Input Form -->
+        <section class="px-6 pb-6">
+            <div class="p-6 bg-white rounded-2xl shadow grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label class="font-semibold">Suhu Rata-Rata (tavg)</label>
+                    <input id="tavg" type="number" value="27" step="0.1" class="mt-1 w-full p-2 rounded-lg border focus:ring-2 focus:ring-blue-400" />
+                </div>
+                <div>
+                    <label class="font-semibold">Suhu Minimum (tmin)</label>
+                    <input id="tmin" type="number" value="23" step="0.1" class="mt-1 w-full p-2 rounded-lg border focus:ring-2 focus:ring-blue-400" />
+                </div>
+                <div>
+                    <label class="font-semibold">Kecepatan Angin (wspd)</label>
+                    <input id="wspd" type="number" value="18" step="0.1" class="mt-1 w-full p-2 rounded-lg border focus:ring-2 focus:ring-blue-400" />
+                </div>
+                <div class="md:col-span-3 text-center">
+                    <button id="predictBtn" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl shadow-lg transition">Prediksi</button>
+                </div>
+            </div>
+        </section>
+
+        <footer class="p-4 bg-blue-600 text-white text-center text-sm">
             <p id="footerText">Data updated every 30 minutes • Powered by C4.5 Decision Tree Algorithm</p>
         </footer>
     </div>
+
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="<?= base_url('/js/script.js') ?>"></script>
 </body>

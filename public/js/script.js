@@ -350,16 +350,54 @@ function drawTree(data) {
                 text.text(d.data.label === 1 ? "HUJAN" : "TIDAK HUJAN");
             }
         });
+    nodeEnter.attr("id", d => {
+        if (d.data.feature && d.data.threshold) {
+            return `node-${d.data.feature}-${d.data.threshold}`;
+        }
+        return null;
+    });
 }
 
 
 loadDecisionTree();
+fetch("/data/tree.json")
+    .then(res => res.json())
+    .then(data => {
+        window.treeData = data;
+        runPrediction(); // langsung prediksi awal
+    });
+function highlightTreePath(path) {
+    d3.selectAll("g.node circle")
+        .style("stroke", "#003C43")
+        .style("stroke-width", 1)
+        .style("fill", "#003C43");
+
+    d3.selectAll("path.link")
+        .style("stroke", "#003C43")
+        .style("stroke-width", 1);
+
+    path.forEach(step => {
+        d3.select(`#node-${step.feature}-${step.threshold}`)
+            .select("circle")
+            .style("stroke", "yellow")
+            .style("stroke-width", 4);
+
+        d3.select(`#node-${step.feature}-${step.threshold}`)
+            .select("text")
+            .style("fill", "yellow");
+    });
+}
+
 function predictFromTree(tree, input) {
     let node = tree;
     let path = [];
 
-    while (node.feature) {
-        path.push(node);
+    while (node && node.feature) {
+        path.push({
+            feature: node.feature,
+            threshold: node.threshold,
+            nodeRef: node // simpan referensi node
+        });
 
         if (input[node.feature] <= node.threshold) {
             node = node.left;
@@ -373,3 +411,27 @@ function predictFromTree(tree, input) {
         path: path
     };
 }
+function updateWeatherCard(input, result) {
+    document.getElementById("temperature").innerText = `${input.tavg}°C`;
+    document.getElementById("weatherCondition").innerText = `suhu minimum: ${input.tmin}°C \nkecepatan angin: ${input.wspd} km/h`;
+    document.getElementById("prediksi_result").innerText = result;
+}
+async function runPrediction() {
+    const input = {
+        tavg: parseFloat(document.getElementById("tavg").value),
+        tmin: parseFloat(document.getElementById("tmin").value),
+        wspd: parseFloat(document.getElementById("wspd").value)
+    };
+
+    const prediction = predictFromTree(window.treeData, input);
+    updateWeatherCard(input, prediction.result);
+    highlightTreePath(prediction.path);
+}
+
+// auto predict on change
+["tavg", "tmin", "wspd"].forEach(id => {
+    document.getElementById(id).addEventListener("input", runPrediction);
+});
+
+// manual predict button
+document.getElementById("predictBtn").addEventListener("click", runPrediction);
