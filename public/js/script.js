@@ -171,7 +171,7 @@ function drawTree(data) {
     nodeGroup.append("text")
         .attr("text-anchor", "middle")
         .attr("fill", "white")
-        .style("font-size", "12px")
+        .style("font-size", "17px")
         .style("font-weight", "600")
         .each(function (d) {
             const t = d3.select(this);
@@ -224,6 +224,7 @@ function drawTree(data) {
 
             
 }
+document.getElementById("prediksi_result").innerText = "⏳ Predicting...";
 
 async function fetchForecastByDate(date) {
     const lat = 0.5417;
